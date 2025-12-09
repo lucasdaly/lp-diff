@@ -39,18 +39,32 @@ def greedy_split_match(
          return [], 0.0
 
      # iterate through new_lines, adding the new lines one by one and checking the similarity score (greedy)
+     content_indices = []  # Track which indices have actual content
      for i in range(start_index, bound):
           
-          combined += new_lines[i]
-          score = levenshtein_similarity(old_line, combined)
+          # Only include lines with actual content (ignore empty/whitespace-only lines)
+          if new_lines[i].strip():
+               combined += new_lines[i]
+               content_indices.append(i)
+               score = levenshtein_similarity(old_line, combined)
 
-          # if score goes down, return the last indices and last score
-          if score < last_score:
-               return list(range(start_index, i)), last_score
+               # if score goes down, return the last content indices and last score
+               if score < last_score:
+                    remaining_indices = content_indices[:-1]
+                    # Only return if we have at least 2 lines
+                    if len(remaining_indices) >= 2:
+                         return remaining_indices, last_score
+                    else:
+                         return [], 0.0
+               
+               last_score = score
+
+     # Only return a split if we have at least 2 lines with actual content  
+     if len(content_indices) < 2:
+          return [], 0.0
           
-          last_score = score
-     # if it continuous growing until the end, return all the indices and the last score
-     return list(range(start_index, i + 1)) ,score
+     # if it continuous growing until the end, return all content indices and the last score
+     return content_indices, score
 
 # testing
 # old_line = "abcdefg"
@@ -92,18 +106,32 @@ def greedy_merge_match(
          return [], 0.0
 
      # iterate through old_lines, adding the old lines one by one and checking the similarity score (greedy)
+     content_indices = []  # Track which indices have actual content
      for i in range(start_index, bound):
           
-          combined += old_lines[i]
-          score = levenshtein_similarity(combined, new_line)
+          # Only include lines with actual content (ignore empty/whitespace-only lines)
+          if old_lines[i].strip():  
+               combined += old_lines[i]
+               content_indices.append(i)
+               score = levenshtein_similarity(combined, new_line)
 
-          # if score goes down, return the last indices and last score
-          if score < last_score:
-               return list(range(start_index, i)), last_score
+               # if score goes down, return the last content indices and last score
+               if score < last_score:
+                    remaining_indices = content_indices[:-1]
+                    # Only return if we have at least 2 lines
+                    if len(remaining_indices) >= 2:
+                         return remaining_indices, last_score
+                    else:
+                         return [], 0.0
+               
+               last_score = score
+     
+     # Only return a merge if we have at least 2 lines with actual content
+     if len(content_indices) < 2:
+          return [], 0.0
           
-          last_score = score
-     # if it continues growing until the end, return all the indices and the last score
-     return list(range(start_index, i + 1)), score
+     # if it continues growing until the end, return all content indices and the last score
+     return content_indices, score
 
 
 
