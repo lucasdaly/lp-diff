@@ -52,49 +52,58 @@ def greedy_split_match(
      # if it continuous growing until the end, return all the indices and the last score
      return list(range(start_index, i + 1)) ,score
 
-# ok So thats detecting one line --> multiple lines, now this is the other way around
-# multiple lines --> one line
-def greedy_merge_match(
-    old_lines: list[str],
-    new_line: str,
-    start_index: int,
-    max_extra_lines: int
-) -> tuple[list[int], float]:
-    """
-    new_line: right line we think multiple old lines couldve merged into
-    old_lines: list of old left lines
-    start_index: index in old_lines to start from
-    max_extra_lines: maximum number of additional lines to consider
-
-    returns: tuple, list of indices in old lines, similarity score
-    If no merge, returns ([], 0.0)
-    """
-    
-    # make sure in range
-    if start_index < 0 or start_index >= len(old_lines):
-        return [], 0.0
-    
-    combined = ""
-    last_score = 0.0
-
-    # cap how far we can go and make sure in range
-    bound = min(len(old_lines), start_index + max_extra_lines + 1)
-    if bound <= start_index:
-        return [], 0.0
-    
-    # greedy iterate through old lines, adding one by one and checking score (REVERSE OF OTHER FUNCTION, ITS QUITE SIMPLE WHEN YOU ALREADY GET THAT ONE caps)
-    for i in range(start_index, bound):
-        combined += old_lines[i]
-        score = levenshtein_similarity(combined, new_line)
-
-        if score < last_score:
-            return list(range(start_index, i)), last_score
-        
-        last_score = score
-    # if it continues growing until the end, return all the indices and the last score
-    return list(range(start_index, i + 1)), score
-
 # testing
+# old_line = "abcdefg"
+# new_lines = ["abc", "def", "g", "hij"]
+# start_index = 0
+# max_extra_lines = 2
+# print(greedy_split_match(old_line, new_lines, start_index, max_extra_lines))
+
+def greedy_merge_match(
+        old_lines: list[str],
+        new_line: str,
+        start_index: int,
+        max_extra_lines: int
+        # old_lines : lines we are checking to see if they merged into new_line
+        # new_line : new (right) line. We are checking to see if multiple old lines merged into it
+        # start_index : index in old_lines to start checking from
+        # max_extra_lines : maximum number of extra lines in the old file to consider for a merge
+
+        # return type: tuple
+            # list of INDICES in old_lines that correspond to the merge into new_line (if any, returns [] if no merge detected)
+            # and then the similarity score (float between 0 and 1)
+                 ) -> tuple[list[int], float]:
+     
+     # make sure start_index is in range
+     if start_index < 0 or start_index >= len(old_lines):
+         return [], 0.0
+     
+     # empty content string to keep adding old lines to
+     combined = ""
+
+     # variable to compare current score vs last one (for greedy)
+     last_score = 0.0
+     
+     # if the max number of extra lines goes beyond the length of old_lines, make it the length of old_lines
+     bound = min(len(old_lines), start_index + max_extra_lines + 1)
+
+     # if bound is for some reason less than or equal to start_index (incorrect input), return no merge
+     if bound <= start_index:
+         return [], 0.0
+
+     # iterate through old_lines, adding the old lines one by one and checking the similarity score (greedy)
+     for i in range(start_index, bound):
+          
+          combined += old_lines[i]
+          score = levenshtein_similarity(combined, new_line)
+
+          # if score goes down, return the last indices and last score
+          if score < last_score:
+               return list(range(start_index, i)), last_score
+          
+          last_score = score
+     # if it continues growing until the end, return all the indices and the last score
+     return list(range(start_index, i + 1)), score
 
 
 

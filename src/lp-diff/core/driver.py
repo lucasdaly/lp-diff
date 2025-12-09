@@ -8,7 +8,7 @@ import match
 lists = preprocess.preprocess()
 simhashlist = set_simhash.set_simhash(lists[0],lists[1])
 can = candidates.createCandidates2(simhashlist[0],simhashlist[1])
-finalmatches, splitmatches, mergematches, unmatched_old, unmatched_new = match.compare(lists[0], lists[1], can)
+finalmatches, splitmatches, mergematches, unmatched_old, unmatched_new = match.compare(lists[0], lists[1], can, threshold=0.5, split_threshold=0.4)
 print("=== REGULAR MATCHES ===")
 for old_idx, new_idx, score in finalmatches:
     print(f"Old line {old_idx+1} ↔ New line {new_idx+1} (score: {score:.3f})")
@@ -43,6 +43,5 @@ for new_idx in unmatched_new:
 print(f"\n=== SUMMARY ===")
 print(f"Regular matches: {len(finalmatches)}")
 print(f"Split matches: {len(splitmatches)}")
-print(f"Merge matches: {len(mergematches)}")
 print(f"Deleted lines: {len(unmatched_old)}")
 print(f"Added lines: {len(unmatched_new)}")

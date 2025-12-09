@@ -57,12 +57,12 @@ def run_single_test(old_file, new_file, xml_file, test_name):
     # Convert results to comparable format (1-indexed to match XML)
     our_matches = [(old_idx + 1, new_idx + 1) for old_idx, new_idx, score in final_matches]
     
-    # Handle split matches - convert N:M splits to individual matches
+    # Handle split matches - convert 1:N splits to individual matches
     for old_idx, split_indices, score in split_matches:
         for new_idx in split_indices:
             our_matches.append((old_idx + 1, new_idx + 1))
     
-    # Handle merge matches - convert M:N merges to individual matches  
+    # Handle merge matches - convert N:1 merges to individual matches  
     for merge_indices, new_idx, score in merge_matches:
         for old_idx in merge_indices:
             our_matches.append((old_idx + 1, new_idx + 1))
@@ -78,7 +78,7 @@ def run_single_test(old_file, new_file, xml_file, test_name):
     filtered_matches, filtered_deletions = filter_results_to_xml_scope(
         our_matches, our_deletions, mentioned_old_lines)
     
-    print(f"Filtered results: {len(filtered_matches)} matches ({len(final_matches)} regular + {len(split_matches)} split + {len(merge_matches)} merge), {len(filtered_deletions)} deletions")
+    print(f"Filtered results: {len(filtered_matches)} matches ({len(final_matches)} regular + {len(split_matches)} splits + {len(merge_matches)} merges), {len(filtered_deletions)} deletions")
     
     # Calculate actual additions from ground truth
     gt_additions = []
