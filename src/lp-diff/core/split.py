@@ -1,3 +1,4 @@
+from operator import ne
 from similarity import levenshtein_similarity
 
 # Check to see if old_line was split into multiple lines in new_lines
@@ -62,7 +63,8 @@ def greedy_merge_match(
           # start_index: index in old_lines to start from
           # max_extra lines: maximum number of additional lines to consider
 
-          # returns: 
+          # returns: tuple, list of indices in old lines, similarity score
+          # If no merge, returns ([], 0.0)
           
           new_line : str,
           old_lines: list[str],
@@ -70,6 +72,30 @@ def greedy_merge_match(
           max_extra_lines: int
           
           ) -> tuple[list[int], float]:
+     
+     # make sure in range
+     if start_index < 0 or start_index >= len(old_lines):
+          return [], 0.0
+     
+     combined = ""
+     last_score = 0.0
+
+     # cap how far we can go and make surte in range
+     bound = min(len(old_lines), start_index + max_extra_lines + 1)
+     if bound <= start_index:
+          return [], 0.0
+     
+     # greedy iterate through old lines, adding one by one and checking score (REVERSE OF OTHER FUNCTION, ITS QUITE SIMPLE WHEN YOU ALREADY GET THAT ONE caps)
+     for i in range(start_index, bound):
+          combined += old_lines[i]
+          score = levenshtein_similarity(combined, new_line)
+
+          if score < last_score:
+               return list(range(start_index, i)), last_score
+          
+          last_score = score
+     
+
 
 
 
