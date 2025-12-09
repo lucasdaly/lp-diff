@@ -52,6 +52,35 @@ def greedy_split_match(
      # if it continuous growing until the end, return all the indices and the last score
      return list(range(start_index, i + 1)) ,score
 
+
+# ok So thats detecting one line --> multiple lines, now this is the other way around
+# multiple lines --> one line
+def greedy_merge_match(
+          
+          #new_line: right line we think multiple old lines couldve merged into
+          # old_lines: list of old left lines
+          # start_index: index in old_lines to start from
+          # max_extra lines: maximum number of additional lines to consider
+
+          # returns: 
+          
+          new_line : str,
+          old_lines: list[str],
+          start_index:int,
+          max_extra_lines: int
+          
+          ) -> tuple[list[int], float]:
+
+
+
+
+
+
+
+
+     
+
+
 # testing
 # old_line = "abcdefg"
 # new_lines = ["abc", "def", "g", "hij"]
