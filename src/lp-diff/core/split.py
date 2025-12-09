@@ -66,8 +66,8 @@ def greedy_merge_match(
           # returns: tuple, list of indices in old lines, similarity score
           # If no merge, returns ([], 0.0)
           
-          new_line : str,
           old_lines: list[str],
+          new_line : str,
           start_index:int,
           max_extra_lines: int
           
@@ -95,6 +95,7 @@ def greedy_merge_match(
           
           last_score = score
      
+     return list(range(start_index, i+1, score))
 
 
 
