@@ -11,6 +11,11 @@ def preprocess():
 
     new_path = os.path.join(f"test_files\\{ext}", f"{file}_2.{ext}") #this is depended on OS
     old_path = os.path.join(f"test_files\\{ext}", f"{file}_1.{ext}")
+    
+    return preprocess_files(old_path, new_path)
+
+def preprocess_files(old_path, new_path):
+    """Process specific file paths and return normalized lines"""
     new_lines = []
     old_lines = []
     print(new_path)

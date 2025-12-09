@@ -8,7 +8,7 @@ import match
 lists = preprocess.preprocess()
 simhashlist = set_simhash.set_simhash(lists[0],lists[1])
 can = candidates.createCandidates2(simhashlist[0],simhashlist[1])
-finalmatches, splitmatches, unmatched_old, unmatched_new = match.compare(lists[0], lists[1], can)
+finalmatches, splitmatches, mergematches, unmatched_old, unmatched_new = match.compare(lists[0], lists[1], can)
 print("=== REGULAR MATCHES ===")
 for old_idx, new_idx, score in finalmatches:
     print(f"Old line {old_idx+1} ↔ New line {new_idx+1} (score: {score:.3f})")
@@ -23,6 +23,14 @@ for old_idx, split_indices, score in splitmatches:
     for idx in split_indices:
         print(f"    Line {idx+1}: {repr(lists[1][idx])}")
 
+print("\n=== MERGE MATCHES ===")
+for merge_indices, new_idx, score in mergematches:
+    print(f"Old lines {[i+1 for i in merge_indices]} merged into line {new_idx+1} (score: {score:.3f})")
+    print(f"  Merged from:")
+    for idx in merge_indices:
+        print(f"    Line {idx+1}: {repr(lists[0][idx])}")
+    print(f"  Into: {repr(lists[1][new_idx])}")
+
 print("\n=== UNMATCHED OLD LINES (DELETED) ===")
 for old_idx in unmatched_old:
     print(f"- Old line {old_idx+1}: {repr(lists[0][old_idx])}")
@@ -35,5 +43,6 @@ for new_idx in unmatched_new:
 print(f"\n=== SUMMARY ===")
 print(f"Regular matches: {len(finalmatches)}")
 print(f"Split matches: {len(splitmatches)}")
+print(f"Merge matches: {len(mergematches)}")
 print(f"Deleted lines: {len(unmatched_old)}")
 print(f"Added lines: {len(unmatched_new)}")
