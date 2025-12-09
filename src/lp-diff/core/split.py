@@ -57,45 +57,44 @@ def greedy_split_match(
 # ok So thats detecting one line --> multiple lines, now this is the other way around
 # multiple lines --> one line
 def greedy_merge_match(
-          
-          #new_line: right line we think multiple old lines couldve merged into
-          # old_lines: list of old left lines
-          # start_index: index in old_lines to start from
-          # max_extra lines: maximum number of additional lines to consider
+    old_lines: list[str],
+    new_line: str,
+    start_index: int,
+    max_extra_lines: int
+) -> tuple[list[int], float]:
+    """
+    new_line: right line we think multiple old lines couldve merged into
+    old_lines: list of old left lines
+    start_index: index in old_lines to start from
+    max_extra_lines: maximum number of additional lines to consider
 
-          # returns: tuple, list of indices in old lines, similarity score
-          # If no merge, returns ([], 0.0)
-          
-          old_lines: list[str],
-          new_line : str,
-          start_index:int,
-          max_extra_lines: int
-          
-          ) -> tuple[list[int], float]:
-     
-     # make sure in range
-     if start_index < 0 or start_index >= len(old_lines):
-          return [], 0.0
-     
-     combined = ""
-     last_score = 0.0
+    returns: tuple, list of indices in old lines, similarity score
+    If no merge, returns ([], 0.0)
+    """
+    
+    # make sure in range
+    if start_index < 0 or start_index >= len(old_lines):
+        return [], 0.0
+    
+    combined = ""
+    last_score = 0.0
 
-     # cap how far we can go and make surte in range
-     bound = min(len(old_lines), start_index + max_extra_lines + 1)
-     if bound <= start_index:
-          return [], 0.0
-     
-     # greedy iterate through old lines, adding one by one and checking score (REVERSE OF OTHER FUNCTION, ITS QUITE SIMPLE WHEN YOU ALREADY GET THAT ONE caps)
-     for i in range(start_index, bound):
-          combined += old_lines[i]
-          score = levenshtein_similarity(combined, new_line)
+    # cap how far we can go and make sure in range
+    bound = min(len(old_lines), start_index + max_extra_lines + 1)
+    if bound <= start_index:
+        return [], 0.0
+    
+    # greedy iterate through old lines, adding one by one and checking score (REVERSE OF OTHER FUNCTION, ITS QUITE SIMPLE WHEN YOU ALREADY GET THAT ONE caps)
+    for i in range(start_index, bound):
+        combined += old_lines[i]
+        score = levenshtein_similarity(combined, new_line)
 
-          if score < last_score:
-               return list(range(start_index, i)), last_score
-          
-          last_score = score
-     
-     return list(range(start_index, i+1, score))
+        if score < last_score:
+            return list(range(start_index, i)), last_score
+        
+        last_score = score
+    # if it continues growing until the end, return all the indices and the last score
+    return list(range(start_index, i + 1)), score
 
 
 
