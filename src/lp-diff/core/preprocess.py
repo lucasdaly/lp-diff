@@ -9,8 +9,13 @@ def preprocess():
     ext = input("Enter file extension (java, py): ").strip()
     file = input("Enter a file to scan: ").strip()
 
+<<<<<<< HEAD
     new_path = os.path.join(f"test_files\\{ext}", f"{file}_2.{ext}") #this is depended on OS
     old_path = os.path.join(f"test_files\\{ext}", f"{file}_1.{ext}")
+=======
+    new_path = os.path.join(f"test_files/{ext}", f"{file}_new.{ext}") #this is depended on OS
+    old_path = os.path.join(f"test_files/{ext}", f"{file}_old.{ext}")
+>>>>>>> mac
     new_lines = []
     old_lines = []
     print(new_path)
